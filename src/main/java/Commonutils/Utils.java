@@ -21,8 +21,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -226,6 +228,24 @@ public class Utils {
 		}
 	}
 	
-	
+
+	public void selectByvalue(WebElement element, String elementName) {
+	try {
+	//explicitWait().until(ExpectedConditions.visibilityOf(element));
+	Select select = new Select(element);
+	select.selectByValue(elementName);
+
+	System.out.println("sucessfully selected the value " + elementName);
+    //test.pass("sucessfully selected the value " + elementName);
+
+	// test.pass("sucessfully clicked on " + elementName);
+	} catch (Exception e) {
+	System.out.println("unable to select the value " + elementName);
+	//test.fail("unable to select the value " + elementName);
+	e.printStackTrace();
+	//Assert.fail();
+
+	}
+	}
 
 }
