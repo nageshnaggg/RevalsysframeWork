@@ -6,4 +6,5 @@ public class ExcelClass {
 	public static String filepath1= userDirectory +"//Reports//";
 	public static String filepath2= userDirectory +"//Screenshots//";
 	public static String filepath3=userDirectory+"//Excels//";
+	
 }

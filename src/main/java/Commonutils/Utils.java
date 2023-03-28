@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -18,8 +19,11 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
@@ -51,7 +55,7 @@ public class Utils {
 	public static String timereport = DateReport.format(daterep);
 	public static String ModuleName;
 	public static ExtentReports report = new ExtentReports(ExcelClass.filepath1);
-
+	String baseURl = "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login";
 	public static ExtentTest logger = report.startTest("Report");
 
 	public static void Reports(String ReportName, String ScriptName) {
@@ -62,8 +66,7 @@ public class Utils {
 	public static void captureScreenshot_pass(WebDriver driver, String ModuleName, String screenshotname, String data)
 			throws IOException {
 		File f1 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		FileUtils.copyFile(f1,
-				new File(ExcelClass.filepath2 + "/" + ModuleName + "/" + "/pass/" + screenshotname + "_" + time + ".png"));
+		FileUtils.copyFile(f1,new File(ExcelClass.filepath2 + "/" + ModuleName + "/" + "/pass/" + screenshotname + "_" + time + ".png"));
 
 		logger.log(LogStatus.PASS, "snapshot below:" + screenshotname + " ", logger.addScreenCapture(ExcelClass.filepath2 + "/" + ModuleName + "/" + "/pass/" + screenshotname + "_" + time + ".png"));
 		logger.log(LogStatus.PASS, data);
@@ -71,8 +74,7 @@ public class Utils {
 		report.flush();
 	}
 
-	public static void captureScreenshot_fail(WebDriver driver, String ModuleName, String screenshotname, String data)
-			throws IOException {
+	public static void captureScreenshot_fail(WebDriver driver, String ModuleName, String screenshotname, String data) throws IOException {
 		File f1 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		FileUtils.copyFile(f1,new File(ExcelClass.filepath2 + "/" + ModuleName + "/" + "/fail/" + screenshotname + "_" + time + ".png"));
 		logger.log(LogStatus.FAIL, "snapshot below:" + screenshotname + " ", logger.addScreenCapture(ExcelClass.filepath2 + "/" + ModuleName + "/" + "/fail/" + screenshotname + "_" + time + ".png"));
@@ -177,11 +179,52 @@ public class Utils {
 	public void baseSetup() {
 		WebDriverManager.chromedriver().setup();
 		driver = new ChromeDriver();
-		driver.get("https://parabank.parasoft.com/");
+		driver.get("https://www.flipkart.com/");
+		//driver.get("https://parabank.parasoft.com/");
 		driver.manage().window().maximize();
 	}
 	
+	public static void Thread_Sleep(long seconds) {
+		try {
+			Thread.sleep(seconds * 1000);
+		} catch (InterruptedException e) {
+			// APP_LOGS.error("Interrupted! " + e);
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		}
+	}
 	
+	
+	@SuppressWarnings("deprecation")
+	public void OpenBrowser(String browser) {
+		switch (browser) {
+		case "Chrome":
+			ChromeOptions options = new ChromeOptions();
+			options.addArguments("--remote-allow-origins=*");
+			options.addArguments("--disable notifications");
+			DesiredCapabilities dd=new DesiredCapabilities();
+			dd.setCapability(ChromeOptions.CAPABILITY, options);
+			options.merge(dd);
+			WebDriverManager.chromedriver().setup();
+			driver = new ChromeDriver(options);
+			driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+			driver.manage().window().maximize();
+			//driver.get(baseURl);
+			break;
+		case "ff":
+			WebDriverManager.firefoxdriver().create();
+			driver = new ChromeDriver();
+			driver.manage().window().maximize();
+		//	driver.get(baseURl);
+			break;
+		case "Edge":
+			WebDriverManager.edgedriver().create();
+			driver = new ChromeDriver();
+			driver.manage().window().maximize();
+			//driver.get(baseURl);
+			break;
+		}
+	}
 	
 	
 
